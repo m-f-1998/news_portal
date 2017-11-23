@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    
+    <head>
+        <title> UK News Portal </title>
+        <meta name = "description" content="The Latest News, Travel, Weather And More From Across Edinburgh." />
+        <meta name="keywords" content="uk news, travel, weather, top stories, video, sport" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="css/style.css" />
+        <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js" ></script>
+    </head>
+
+    <body>
+        <div class="header">
+            <h1>
+                UK News Portal - Search<br />
+            </h1>
+            <ul>
+                <li><a href="http://www2.macs.hw.ac.uk/~mf48/coursework/index.xhtml">Top Stories</a></li>
+                <li><a href="http://www2.macs.hw.ac.uk/~mf48/coursework/sport/index.xhtml">Sport</a></li>
+                <li><a href="http://www2.macs.hw.ac.uk/~mf48/coursework/youtube/index.xhtml">YouTube</a></li>
+                <li><a href="http://www2.macs.hw.ac.uk/~mf48/coursework/search/index.xhtml">Search</a></li>
+            </ul>
+        </div>
+        
+        <div class="mainNews">     
+            <br /><br />
+            
+                <form>
+                    Search for keywords:
+                    <input id="keywords" type="search" name="keywords"/>    <br /> <br />
+                    
+                    Choose a category:
+                    <input type="text" list="categories">
+                        <datalist id="categories">
+                            <option value="Top Stories"/>
+                            <option value="Sport"/>
+                            <option value="Youtube"/>
+                        </datalist>
+                    </input>
+                    <br /> <br />
+                    <input type="button" name="search" id="go" value="Click">Click</input>
+                    <div id="search"></div>
+                </form>
+                
+                <script type="text/javascript">
+                
+                <![CDATA[
+                
+                 var catBox = document.getElementById("categories");
+                    var category = catBox.options[catBox.selectedIndex].innerHTML;
+                    var keywords = document.getElementById("keywords").innerHTML.split(" "); // Can I use split here?
+                    
+                    document.getElementById('go').onclick = getNews(category, keywords);
+                    
+                function makeNewsPage(newsAPIs, keywords) {
+                    
+                    function toTitleCase(str) {
+                        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+                    }
+                    
+                        // May need to wipe current page body here?
+                   
+                    for (var i = 0; i < newsAPIs.length; i++) {
+                        $.getJSON(newsAPIs[i], function(data) {
+                            var foundStory = false;
+                            for (var i = 0; i < data.articles.length; i++) {
+                                var relevant = false;
+                                var article = data.articles[i];
+                                for (word in keywords) {
+                                    if (article.toString().indexOf(word) > -1) { // I think article is an array? If not then toString() isn't necessary.
+                                        relevant = true;
+                                        foundStory = true;
+                                    }
+                                }
+                                if (relevant) {
+                                    var newDiv = document.createElement('div');
+                                    newDiv.setAttribute('class', "newsElement");
+                                
+                                    var img = document.createElement('img');
+                                    img.src = article.urlToImage;
+                                    img.alt = "Article Image";
+                                    newDiv.appendChild(img);
+                            
+                                    var lineBreak = document.createElement("br");
+                                    newDiv.appendChild(lineBreak);
+                                    newDiv.appendChild(lineBreak.cloneNode(true));
+                            
+                                    var source = data.source;
+                                    source = source.split('-').join(' ');
+                                    source = toTitleCase(source);
+                                    var newsTitle = document.createTextNode(article.title + " by " + source);
+                                    newDiv.appendChild(newsTitle);
+                                
+                                    newDiv.appendChild(lineBreak.cloneNode(true));
+                                    newDiv.appendChild(lineBreak.cloneNode(true));
+
+                                    var newsDescription = document.createTextNode(article.description);
+                                    newDiv.appendChild(newsDescription);
+
+                                    newDiv.appendChild(lineBreak.cloneNode(true));
+
+                                    var link = document.createElement('a');
+                                    link.setAttribute('href', article.url);
+                                    link.setAttribute('class', 'link');
+                                    var node = document.createTextNode('Click Here For The Full Story');
+                                    link.appendChild(node);
+                                    newDiv.appendChild(link);
+
+                                    newDiv.appendChild(lineBreak.cloneNode(true));
+                                    newDiv.appendChild(lineBreak.cloneNode(true));
+
+                                    document.getElementsByClassName("mainNews")[0].appendChild(newDiv);
+                                }
+                    
+                    }
+                    
+                    return foundStory;
+                    
+                    })};
+                    
+                    }
+                    
+                    function makeYTPage (IDs, keywords) {
+                    
+                        // May need to wipe current page body here?
+                    
+                        for (var i = 0; i < IDs.length; i++){
+                        $.getJSON('https://www.googleapis.com/youtube/v3/search?key=AIzaSyAgFNHAzAqSAvuD5_xngFw4ksL_l-I83vU&channelId=' + IDs[i] + '&part=snippet,id&order=date&maxResults=5', function(data) {
+                            var foundVideo = false;
+                            for (var i = 0; i < data.articles.length; i++) {
+                                var relevant = false;
+                                var article = data.articles[i];
+                                for (word in keywords) {
+                                    if (article.toString().indexOf(word) > -1) { // I think article is an array? If not then toString() isn't necessary.
+                                        relevant = true;
+                                        foundVideo = true;
+                                    }
+                                }
+                                if (relevant) {
+                                    for (var i = 0; i < data.items.length; i++) {
+                                        var newDiv = document.createElement('div');
+                                        newDiv.setAttribute('class', "videoElements");
+
+                                        var frame = document.createElement('iframe');
+                                        frame.width = '80%';
+                                        frame.height = '300px';
+                                        frame.src = "https://www.youtube.com/embed/" + article.id.videoId;
+                                        newDiv.appendChild(frame);
+                            
+                                        var lineBreak = document.createElement("br");
+                                        newDiv.appendChild(lineBreak);
+                                        newDiv.appendChild(lineBreak.cloneNode(true));
+
+                                        document.getElementsByClassName("mainVideos")[0].appendChild(newDiv);
+                                    }
+                                }
+                        }
+                        
+                        return foundVideo;
+                        
+                        )};
+                    
+                    }
+                   
+                   // Change source API
+                   
+                   function getNews(category, keywords) {
+                        var newsLinks;
+                        switch(category) {
+                        case "Top Stories":
+                            newsLinks = ['https://newsapi.org/v1/articles?source=associated-press&sortBy=top&apiKey=d94ba1fe850948b6a79cbc625948d477', ' https://newsapi.org/v1/articles?source=business-insider-uk&sortBy=top&apiKey=d94ba1fe850948b6a79cbc625948d477', 'https://newsapi.org/v1/articles?source=independent&sortBy=top&apiKey=d94ba1fe850948b6a79cbc625948d477', 'https://newsapi.org/v1/articles?source=the-guardian-uk&sortBy=top&apiKey=d94ba1fe850948b6a79cbc625948d477', 'https://newsapi.org/v1/articles?source=the-telegraph&sortBy=top&apiKey=d94ba1fe850948b6a79cbc625948d477'];
+                            if !(makeNewsPage(newsLinks, keywords) {
+                            
+                                var newDiv = document.createElement('div');
+                                newDiv.setAttribute('class', "error");
+                                
+                                var message = document.createTextNode("Sorry, no results for \'" + keywords.toString() + "\' in the \'" + category + "\' category were found!");
+                                newDiv.appendChild(message);
+                                    
+                                document.getElementsByClassName("mainVideos")[0].appendChild(newDiv);
+                                
+                            };
+                            break;
+                        case "Sport":
+                            newsLinks = ['https://newsapi.org/v1/articles?source=bbc-sport&sortBy=top&apiKey=d94ba1fe850948b6a79cbc625948d477', 'https://newsapi.org/v1/articles?source=talksport&sortBy=top&apiKey=d94ba1fe850948b6a79cbc625948d477'];
+                            if !(makeNewsPage(newsLinks, keywords) {
+                            
+                                var newDiv = document.createElement('div');
+                                newDiv.setAttribute('class', "error");
+                                
+                                var message = document.createTextNode("Sorry, no results for \'" + keywords.toString() + "\' in the \'" + category + "\' category were found!");
+                                newDiv.appendChild(message);
+                                    
+                                document.getElementsByClassName("mainVideos")[0].appendChild(newDiv);
+                                
+                            };
+                            break;
+                        case "Youtube":
+                            newsLinks = ['UC16niRr50-MSBwiO3YDb3RA','UCHpw8xwDNhU9gdohEcJu4aA', 'UCoMdktPbSTixAyNGwb-UYkQ', 'UCoUxsWakJucWg46KW5RsvPw', 'UCTrQ7HXWRRxr7OsOtodr2_w'];
+                            if !(makeYTPage(newsLinks, keywords)) {
+                            
+                                var newDiv = document.createElement('div');
+                                newDiv.setAttribute('class', "error");
+                                    
+                                var message = document.createTextNode("Sorry, no results for \'" + keywords.toString() + "\' in the \'" + category + "\' category were found!");
+                                newDiv.appendChild(message);
+                                        
+                                document.getElementsByClassName("mainVideos")[0].appendChild(newDiv);
+                            
+                            }
+                            break;
+                        }
+                   }
+                   
+                   
+                    ]]>
+                    
+                </script>
+                
+            </div>
+            
+        
+        <p>
+             <a href="http://validator.w3.org/check?uri=referer">
+                 <img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Strict" height="31" width="88" />
+             </a>
+        </p>
+        
+        <div id="footer">
+            <br /> <p> News Sources: Include: BBC; Channel 4; Sky; Financial Times; And The Guardian </p><br />
+             Web Portal Created for Web Programming Coursework Two By Matthew Frankland, Chay Rice, And Callum Latham. <br /> <br />
+        </div>
+    </body>
+</html>

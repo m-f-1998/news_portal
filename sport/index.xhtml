@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    
+    <head>
+        <title> UK News Portal </title>
+        <meta name = "description" content="The Latest News, Travel, Weather And More From Across Edinburgh." />
+        <meta name="keywords" content="uk news, travel, weather, top stories, video, sport" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="css/style.css" />
+        <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js" ></script>
+    </head>
+
+    <body>
+        <div class="header">
+            <h1>
+                UK News Portal - Sport<br />
+            </h1>
+            <ul>
+                <li><a href="http://www2.macs.hw.ac.uk/~mf48/coursework/index.xhtml">Top Stories</a></li>
+                <li><a href="http://www2.macs.hw.ac.uk/~mf48/coursework/sport/index.xhtml">Sport</a></li>
+                <li><a href="http://www2.macs.hw.ac.uk/~mf48/coursework/youtube/index.xhtml">YouTube</a></li>
+            </ul>
+        </div>
+    
+        <div class="mainNews">     
+            <br /><br />
+            
+            <script type="text/javascript">
+                <![CDATA[
+                    var newsAPI = ['https://newsapi.org/v1/articles?source=bbc-sport&sortBy=top&apiKey=d94ba1fe850948b6a79cbc625948d477', 'https://newsapi.org/v1/articles?source=talksport&sortBy=top&apiKey=d94ba1fe850948b6a79cbc625948d477'];
+                    
+                   
+                   function toTitleCase(str) {
+                        return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+                   }
+                   
+                   for (var i = 0; i < newsAPI.length; i++) {
+                   $.getJSON(newsAPI[i], function(data) {
+                    for (var i = 0; i < data.articles.length; i++) {
+                        var newDiv = document.createElement('div');
+                        newDiv.setAttribute('class', "newsElement");
+                    
+                        var img = document.createElement('img');
+                        img.src = data.articles[i].urlToImage;
+                        img.alt = "Article Image";
+                        newDiv.appendChild(img);
+                   
+                        var lineBreak = document.createElement("br");
+                        newDiv.appendChild(lineBreak);
+                        newDiv.appendChild(lineBreak.cloneNode(true));
+                   
+                        var source = data.source;
+                        source = source.split('-').join(' ');
+                        source = toTitleCase(source);
+                        var newsTitle = document.createTextNode(data.articles[i].title + " by " + source);
+                        newDiv.appendChild(newsTitle);
+                       
+                        newDiv.appendChild(lineBreak.cloneNode(true));
+                        newDiv.appendChild(lineBreak.cloneNode(true));
+
+                        var newsDescription = document.createTextNode(data.articles[i].description);
+                        newDiv.appendChild(newsDescription);
+
+                        newDiv.appendChild(lineBreak.cloneNode(true));
+
+                        var link = document.createElement('a');
+                        link.setAttribute('href', data.articles[i].url);
+                        link.setAttribute('class', 'link');
+                        var node = document.createTextNode('Click Here For The Full Story');
+                        link.appendChild(node);
+                        newDiv.appendChild(link);
+
+                        newDiv.appendChild(lineBreak.cloneNode(true));
+                        newDiv.appendChild(lineBreak.cloneNode(true));
+
+                        document.getElementsByClassName("mainNews")[0].appendChild(newDiv);
+                    }})};]]>
+            </script>
+        </div>
+        
+        <p>
+             <a href="http://validator.w3.org/check?uri=referer">
+                 <img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Strict" height="31" width="88" />
+             </a>
+        </p>
+        
+        <div id="footer">
+            <br /> <p> News Sources: Include: BBC Sport; and Talk Sport </p> <br />
+             Web Portal Created for Web Programming Coursework Two By Matthew Frankland, Chay Rice, And Callum Latham. <br /> <br />
+        </div>
+    </body>
+</html>

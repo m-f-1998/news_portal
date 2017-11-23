@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+    
+    <head>
+        <title> UK News Portal </title>
+        <meta name = "description" content="The Latest News, Travel, Weather And More From Across Edinburgh." />
+        <meta name="keywords" content="uk news, travel, weather, top stories, video, sport" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="css/style.css" />
+        <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js" ></script>
+    </head>
+
+    <body>
+        <div class="header">
+            <h1>
+                UK News Portal - YouTube<br />
+            </h1>
+            <ul>
+                <li><a href="http://www2.macs.hw.ac.uk/~mf48/coursework/index.xhtml">Top Stories</a></li>
+                <li><a href="http://www2.macs.hw.ac.uk/~mf48/coursework/sport/index.xhtml">Sport</a></li>
+                <li><a href="http://www2.macs.hw.ac.uk/~mf48/coursework/youtube/index.xhtml">YouTube</a></li>
+            </ul>
+        </div>
+    
+        <div class="mainVideos">     
+            <br /><br />
+            
+            <script type="text/javascript">
+                <![CDATA[
+                    var youtubeID = ['UC16niRr50-MSBwiO3YDb3RA','UCHpw8xwDNhU9gdohEcJu4aA', 'UCoMdktPbSTixAyNGwb-UYkQ', 'UCoUxsWakJucWg46KW5RsvPw', 'UCTrQ7HXWRRxr7OsOtodr2_w'];
+                    for (var i = 0; i < youtubeID.length; i++){
+                        $.getJSON('https://www.googleapis.com/youtube/v3/search?key=AIzaSyAgFNHAzAqSAvuD5_xngFw4ksL_l-I83vU&channelId=' + youtubeID[i] + '&part=snippet,id&order=date&maxResults=5', function(data) {
+                            for (var i = 0; i < data.items.length; i++) {
+                                var newDiv = document.createElement('div');
+                                newDiv.setAttribute('class', "videoElements");
+
+                                var frame = document.createElement('iframe');
+                                frame.width = '80%';
+                                frame.height = '300px';
+                                frame.src = "https://www.youtube.com/embed/" + data.items[i].id.videoId;
+                                newDiv.appendChild(frame);
+                       
+                                var lineBreak = document.createElement("br");
+                                newDiv.appendChild(lineBreak);
+                                newDiv.appendChild(lineBreak.cloneNode(true));
+
+                                document.getElementsByClassName("mainVideos")[0].appendChild(newDiv);
+                           }
+                       })};]]>
+                </script>
+            </div>
+        
+        <p>
+             <a href="http://validator.w3.org/check?uri=referer">
+                 <img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Strict" height="31" width="88" />
+             </a>
+        </p>
+        
+        <div id="footer">
+            <br /> <p> News Sources: Include: BBC; Channel 4; Sky; Financial Times; And The Guardian </p><br />
+             Web Portal Created for Web Programming Coursework Two By Matthew Frankland, Chay Rice, And Callum Latham. <br /> <br />
+        </div>
+    </body>
+</html>
